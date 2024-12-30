@@ -1,46 +1,37 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.8;
 
-import {ptr, createPointer, Node, DLL, NULL_PTR, NodeLib, DoublyLinkedListLib} from "src/DoublyLinkedList.sol";
+import {ptr, createPointer, DLL, NULL_PTR, DoublyLinkedListLib} from "src/DoublyLinkedList.sol";
 
-struct Name {
-    string first;
-    string middle;
-    string last;
-}
-
+/// @dev shows basic DLL use of indexed adding, removing, and accessing data in the list
+/// should add an amend function too and maybe find a way to use pop and push for a swap
 contract NameRegistry {
-    using NodeLib for Node;
     using DoublyLinkedListLib for DLL;
 
-    mapping(ptr => Name) public names;
+    mapping(ptr => string) public names;
 
     DLL public registry;
 
     uint256 private counter;
 
     constructor () {
-        Name memory cooki = Name({
-            first: "Cooki",
-            middle: "Von",
-            last: "Crumble"
-        });
+        string memory cooki = "Cooki";
         ptr cookiPtr = _createPtrForName(cooki);
         registry.push(cookiPtr);
     }
 
-    function _createPtrForName(Name memory _name) private returns (ptr newPtr) {
+    function _createPtrForName(string memory _name) private returns (ptr newPtr) {
         newPtr = createPointer(++counter);
         names[newPtr] = _name;
     }
 
-    function nameAtPosition(uint256 i) external view returns (Name memory) {
+    function nameAtPosition(uint256 i) external view returns (string memory) {
         require(i < registry.length, "Invalid Position");
         ptr positionPtr = registry.at(i);
         return names[positionPtr];
     } 
 
-    function addNameAtPosition(uint256 i, Name memory _name) external {
+    function addNameAtPosition(uint256 i, string memory _name) external {
         uint256 length = registry.length;
         require(i <= length, "Invalid Position");
         ptr positionPtr = (i == length) ? NULL_PTR : registry.at(i);

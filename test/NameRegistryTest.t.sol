@@ -2,7 +2,7 @@
 pragma solidity ^0.8.8;
 
 import {ptr, Node, DLL, NodeLib, DoublyLinkedListLib, isValidPointer, validatePointer} from "src/DoublyLinkedList.sol";
-import {NameRegistry, Name} from "src/examples/NameRegistry.sol";
+import {NameRegistry} from "src/examples/NameRegistry.sol";
 import {Test, console} from "forge-std/Test.sol";
 
 contract NameRegistryTest is Test {
@@ -16,58 +16,62 @@ contract NameRegistryTest is Test {
     }
 
     function testInit() public view {
-        (uint256 length, uint256 counter, ptr head, ptr tail) = nameRegistry.registry();
-        assertEq(length, 1);
+        (uint256 counter, uint256 length, ptr head, ptr tail) = nameRegistry.registry();
         assertEq(counter, 1);
+        assertEq(length, 1);
         assertEq(ptr.unwrap(head), 1);
         assertEq(ptr.unwrap(tail), 1);
 
-        Name memory cooki = nameRegistry.nameAtPosition(0);
-        assertEq(cooki.first, "Cooki");
-        assertEq(cooki.middle, "Von");
-        assertEq(cooki.last, "Crumble");
+        string memory cooki = nameRegistry.nameAtPosition(0);
+        assertEq(cooki, "Cooki");
     }
 
     function testPushTwoAndApendOneToBeginning() public {
-        /// Push two to the end
-        Name memory sarah = Name({
-            first: "Sarah",
-            middle: "Jane",
-            last: "Brown"
-        });
-        Name memory billy = Name({
-            first: "Billy",
-            middle: "John",
-            last: "Blue"
-        });
+        /// Push two
+        nameRegistry.addNameAtPosition(1, "Sarah");
+        nameRegistry.addNameAtPosition(1, "Billy");
 
-        nameRegistry.addNameAtPosition(1, sarah);
-        nameRegistry.addNameAtPosition(2, billy);
-
-        (uint256 length, uint256 counter, ptr head, ptr tail) = nameRegistry.registry();
-        assertEq(length, 3);
+        (uint256 counter, uint256 length, ptr head, ptr tail) = nameRegistry.registry();
         assertEq(counter, 3);
+        assertEq(length, 3);
         assertEq(ptr.unwrap(head), 1);
-        assertEq(ptr.unwrap(tail), 3);
+        assertEq(ptr.unwrap(tail), 2);
 
-        Name memory returned = nameRegistry.nameAtPosition(1);
-        assertEq(returned.first, "Sarah");
-        assertEq(returned.middle, "Jane");
-        assertEq(returned.last, "Brown");
+        string memory returned = nameRegistry.nameAtPosition(2);
+        assertEq(returned, "Sarah");
 
         /// Add one to the front
-        Name memory claire = Name({
-            first: "Claire",
-            middle: "Joan",
-            last: "Black"
-        });
+        nameRegistry.addNameAtPosition(0, "Claire");
 
-        nameRegistry.addNameAtPosition(0, claire);
+        (counter, length, head, tail) = nameRegistry.registry();
+        assertEq(counter, 4);
+        assertEq(length, 4);
+        assertEq(ptr.unwrap(head), 4);
+        assertEq(ptr.unwrap(tail), 2);
 
         /// Cooki now in second position
         returned = nameRegistry.nameAtPosition(1);
-        assertEq(returned.first, "Cooki");
-        assertEq(returned.middle, "Von");
-        assertEq(returned.last, "Crumble");
+        assertEq(returned, "Cooki");
+    }
+
+    function testPushTwoAndDeleteSecondNode() public {
+        /// Push two to the beginning
+        nameRegistry.addNameAtPosition(0, "Sarah");
+        nameRegistry.addNameAtPosition(0, "Billy");
+
+        (uint256 counter, uint256 length, ptr head, ptr tail) = nameRegistry.registry();
+        assertEq(counter, 3);
+        assertEq(length, 3);
+        assertEq(ptr.unwrap(head), 3);
+        assertEq(ptr.unwrap(tail), 1);
+
+        /// Delete sarah
+        nameRegistry.removeNameAtPosition(1);
+
+        (counter, length, head, tail) = nameRegistry.registry();
+        assertEq(counter, 3);
+        assertEq(length, 2);
+        assertEq(ptr.unwrap(head), 3);
+        assertEq(ptr.unwrap(tail), 1);
     }
 }

@@ -182,6 +182,16 @@ library DoublyLinkedListLib {
         ++_dll.length;
     }
 
+    function update(DLL storage _dll, ptr _node, ptr _value) internal {
+        validatePointer(_node);
+        validatePointer(_value);
+        _dll.nodes[_node].validateNode();
+        
+        ptr next = _dll.nodes[_node].next;
+        ptr prev = _dll.nodes[_node].prev;
+        _dll.nodes[_node].set(_value, next, prev);
+    }
+
     /// HELPERS ///
 
     function _createPointer(DLL storage _dll) private returns (ptr) {
