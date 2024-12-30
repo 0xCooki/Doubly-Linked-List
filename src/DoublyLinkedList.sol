@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.8;
 
-type ptr is uint256;
+type ptr is uint64;
 
 struct Node {
     ptr value;
@@ -10,8 +10,8 @@ struct Node {
 }
 
 struct DLL {
-    uint256 counter;
-    uint256 length;
+    uint64 counter;
+    uint64 length;
     ptr head;
     ptr tail;
     mapping(ptr => Node) nodes;
@@ -23,7 +23,7 @@ error InvalidPointer();
 error InvalidLength();
 error ListEmpty();
 
-function createPointer(uint256 _seed) pure returns (ptr) {
+function createPointer(uint64 _seed) pure returns (ptr) {
     return ptr.wrap(_seed);
 }
 
@@ -36,16 +36,6 @@ function validatePointer(ptr _ptr) pure {
 }
 
 library NodeLib {
-    /// @dev maybe delete
-    function isHead(Node storage _node) internal view returns (bool) {
-        return !isValidPointer(_node.next);
-    }
-
-    /// @dev maybe delete
-    function isTail(Node storage _node) internal view returns (bool) {
-        return !isValidPointer(_node.prev);
-    }
-
     function isValidNode(Node storage _node) internal view returns (bool) {
         return isValidPointer(_node.value);
     }
@@ -70,8 +60,12 @@ library NodeLib {
 library DoublyLinkedListLib {
     using NodeLib for Node;
 
-    function at(DLL storage _dll, uint256 i) internal view returns (ptr node) {
-        uint256 length = _dll.length;
+    function valueAt(DLL storage _dll, ptr _node) internal view returns (ptr node) {
+        node = _dll.nodes[_node].value;
+    }
+
+    function at(DLL storage _dll, uint64 i) internal view returns (ptr node) {
+        uint64 length = _dll.length;
         if (i >= length) revert InvalidLength();
         if (i < length / 2) {
             node = _dll.head;
@@ -95,22 +89,37 @@ library DoublyLinkedListLib {
 
     function find(
         DLL storage _dll,
-        function(ptr, uint256, bytes memory) view returns (bool) _isMatch,
+        function(ptr, uint64, bytes memory) view returns (bool) _isMatch,
         bytes memory _data
-    ) internal view returns (ptr node, uint256 i) {
+    ) internal view returns (ptr node, uint64 i) {
         node = _dll.head;
         while (isValidPointer(node)) {
             if (_isMatch(node, i, _data)) return (node, i);
             node = _dll.nodes[node].next;
             ++i;
         }
-        return (NULL_PTR, ~uint256(0));
+        return (NULL_PTR, ~uint64(0));
     }
 
-    function each(DLL storage _dll, function(ptr, uint256, bytes memory) returns (bool) _onEach, bytes memory _data)
+    function rfind(
+        DLL storage _dll,
+        function(ptr, uint64, bytes memory) view returns (bool) _isMatch,
+        bytes memory _data
+    ) internal view returns (ptr node, uint64 i) {
+        node = _dll.tail;
+        i = _dll.length;
+        while (isValidPointer(node)) {
+            if (_isMatch(node, i, _data)) return (node, i);
+            node = _dll.nodes[node].prev;
+            --i;
+        }
+        return (NULL_PTR, ~uint64(0));
+    }
+
+    function each(DLL storage _dll, function(ptr, uint64, bytes memory) returns (bool) _onEach, bytes memory _data)
         internal
     {
-        uint256 i;
+        uint64 i;
         ptr node = _dll.head;
         while (isValidPointer(node)) {
             if (!_onEach(node, i, _data)) break;
@@ -186,7 +195,7 @@ library DoublyLinkedListLib {
         validatePointer(_node);
         validatePointer(_value);
         _dll.nodes[_node].validateNode();
-        
+
         ptr next = _dll.nodes[_node].next;
         ptr prev = _dll.nodes[_node].prev;
         _dll.nodes[_node].set(_value, next, prev);

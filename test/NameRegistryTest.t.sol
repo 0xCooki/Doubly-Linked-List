@@ -16,7 +16,7 @@ contract NameRegistryTest is Test {
     }
 
     function testInit() public view {
-        (uint256 counter, uint256 length, ptr head, ptr tail) = nameRegistry.registry();
+        (uint64 counter, uint64 length, ptr head, ptr tail) = nameRegistry.registry();
         assertEq(counter, 1);
         assertEq(length, 1);
         assertEq(ptr.unwrap(head), 1);
@@ -31,7 +31,7 @@ contract NameRegistryTest is Test {
         nameRegistry.addNameAtPosition(1, "Sarah");
         nameRegistry.addNameAtPosition(1, "Billy");
 
-        (uint256 counter, uint256 length, ptr head, ptr tail) = nameRegistry.registry();
+        (uint64 counter, uint64 length, ptr head, ptr tail) = nameRegistry.registry();
         assertEq(counter, 3);
         assertEq(length, 3);
         assertEq(ptr.unwrap(head), 1);
@@ -59,7 +59,7 @@ contract NameRegistryTest is Test {
         nameRegistry.addNameAtPosition(0, "Sarah");
         nameRegistry.addNameAtPosition(0, "Billy");
 
-        (uint256 counter, uint256 length, ptr head, ptr tail) = nameRegistry.registry();
+        (uint64 counter, uint64 length, ptr head, ptr tail) = nameRegistry.registry();
         assertEq(counter, 3);
         assertEq(length, 3);
         assertEq(ptr.unwrap(head), 3);

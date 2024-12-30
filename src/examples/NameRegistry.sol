@@ -12,11 +12,10 @@ contract NameRegistry {
 
     DLL public registry;
 
-    uint256 private counter;
+    uint64 private counter;
 
-    constructor () {
-        string memory cooki = "Cooki";
-        ptr cookiPtr = _createPtrForName(cooki);
+    constructor() {
+        ptr cookiPtr = _createPtrForName("Cooki");
         registry.push(cookiPtr);
     }
 
@@ -25,21 +24,29 @@ contract NameRegistry {
         names[newPtr] = _name;
     }
 
-    function nameAtPosition(uint256 i) external view returns (string memory) {
+    function nameAtPosition(uint64 i) external view returns (string memory) {
         require(i < registry.length, "Invalid Position");
         ptr positionPtr = registry.at(i);
-        return names[positionPtr];
-    } 
+        ptr valuePtr = registry.valueAt(positionPtr);
+        return names[valuePtr];
+    }
 
-    function addNameAtPosition(uint256 i, string memory _name) external {
+    function addNameAtPosition(uint64 i, string memory _name) external {
         uint256 length = registry.length;
         require(i <= length, "Invalid Position");
         ptr positionPtr = (i == length) ? NULL_PTR : registry.at(i);
-        ptr newPtr = _createPtrForName(_name);
-        registry.insertBefore(positionPtr, newPtr);
+        ptr valuePtr = _createPtrForName(_name);
+        registry.insertBefore(positionPtr, valuePtr);
     }
 
-    function removeNameAtPosition(uint256 i) external {
+    function amendNameAtPosition(uint64 i, string memory _name) external {
+        require(i < registry.length, "Invalid Position");
+        ptr positionPtr = registry.at(i);
+        ptr valuePtr = _createPtrForName(_name);
+        registry.update(positionPtr, valuePtr);
+    }
+
+    function removeNameAtPosition(uint64 i) external {
         require(i < registry.length, "Invalid Position");
         ptr positionPtr = registry.at(i);
         registry.remove(positionPtr);
