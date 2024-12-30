@@ -1,21 +1,23 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.8;
 
-import {ptr, createPointer, Node, DLL, NodeLib, DoublyLinkedListLib} from "src/DoublyLinkedList.sol";
+import {ptr, createPointer, Node, DLL, NULL_PTR, NodeLib, DoublyLinkedListLib} from "src/DoublyLinkedList.sol";
+
+struct Name {
+    string first;
+    string middle;
+    string last;
+}
 
 contract NameRegistry {
     using NodeLib for Node;
     using DoublyLinkedListLib for DLL;
 
-    struct Name {
-        string first;
-        string middle;
-        string last;
-    }
-
     mapping(ptr => Name) public names;
 
     DLL public registry;
+
+    uint256 private counter;
 
     constructor () {
         Name memory cooki = Name({
@@ -27,6 +29,11 @@ contract NameRegistry {
         registry.push(cookiPtr);
     }
 
+    function _createPtrForName(Name memory _name) private returns (ptr newPtr) {
+        newPtr = createPointer(++counter);
+        names[newPtr] = _name;
+    }
+
     function nameAtPosition(uint256 i) external view returns (Name memory) {
         require(i < registry.length, "Invalid Position");
         ptr positionPtr = registry.at(i);
@@ -34,8 +41,9 @@ contract NameRegistry {
     } 
 
     function addNameAtPosition(uint256 i, Name memory _name) external {
-        require(i <= registry.length, "Invalid Position");
-        ptr positionPtr = registry.at(i);
+        uint256 length = registry.length;
+        require(i <= length, "Invalid Position");
+        ptr positionPtr = (i == length) ? NULL_PTR : registry.at(i);
         ptr newPtr = _createPtrForName(_name);
         registry.insertBefore(positionPtr, newPtr);
     }
@@ -44,12 +52,5 @@ contract NameRegistry {
         require(i < registry.length, "Invalid Position");
         ptr positionPtr = registry.at(i);
         registry.remove(positionPtr);
-    }
-
-    /// HELPER ///
-
-    function _createPtrForName(Name memory _name) private returns (ptr newPtr) {
-        newPtr = createPointer(block.timestamp);
-        names[newPtr] = _name;
     }
 }
