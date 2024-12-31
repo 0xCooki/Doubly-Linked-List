@@ -1,5 +1,5 @@
 /// SPDX-License-Identifier: MIT
-/// @author Cooki.eth
+/// @author 0xCooki
 pragma solidity ^0.8.8;
 
 import {ptr, Node, DLL, NodeLib, DoublyLinkedListLib, isValidPointer, validatePointer} from "src/DoublyLinkedList.sol";

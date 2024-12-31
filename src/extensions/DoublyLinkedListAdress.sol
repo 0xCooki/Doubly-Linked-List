@@ -1,5 +1,5 @@
 /// SPDX-License-Identifier: MIT
-/// @author Cooki.eth
+/// @author 0xCooki
 pragma solidity ^0.8.8;
 
 import {ptr, createPointer, DLL, NULL_PTR, DoublyLinkedListLib} from "src/DoublyLinkedList.sol";
@@ -14,11 +14,6 @@ contract DoublyLinkedListAddress {
     uint64 private counter;
 
     error InvalidPosition();
-
-    function _createPtrForValue(address _value) private returns (ptr newPtr) {
-        newPtr = createPointer(++counter);
-        values[newPtr] = _value;
-    }
 
     /// PUBLIC ///
 
@@ -53,14 +48,21 @@ contract DoublyLinkedListAddress {
 
     /// VIEW ///
 
-    function valueAtPosition(uint64 _i) public virtual view returns (address) {
+    function valueAtPosition(uint64 _i) public view virtual returns (address) {
         if (_i >= list.length) revert InvalidPosition();
         ptr positionPtr = list.at(_i);
         ptr valuePtr = list.valueAt(positionPtr);
         return values[valuePtr];
     }
 
-    function length() public virtual view returns (uint64) {
+    function length() public view virtual returns (uint64) {
         return list.length;
+    }
+
+    /// PRIVATE ///
+
+    function _createPtrForValue(address _value) private returns (ptr newPtr) {
+        newPtr = createPointer(++counter);
+        values[newPtr] = _value;
     }
 }

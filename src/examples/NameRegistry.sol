@@ -1,26 +1,26 @@
 /// SPDX-License-Identifier: MIT
-/// @author Cooki.eth
+/// @author 0xCooki
 pragma solidity ^0.8.8;
 
 import {DoublyLinkedListBytes} from "src/extensions/DoublyLinkedListBytes.sol";
 
 contract NameRegistry is DoublyLinkedListBytes {
     constructor() {
-        addValueAtPosition(0, 'Cooki');
+        addValueAtPosition(0, "Cooki");
     }
 }
 
 contract GatedNameRegistry is DoublyLinkedListBytes {
     address immutable owner;
 
-    modifier onlyOwner {
+    modifier onlyOwner() {
         if (msg.sender != owner) revert();
         _;
     }
 
     constructor() {
         owner = msg.sender;
-        addValueAtPosition(0, 'Cooki');
+        addValueAtPosition(0, "Cooki");
     }
 
     function addValueAtPosition(uint64 _i, bytes memory _value) public override onlyOwner {

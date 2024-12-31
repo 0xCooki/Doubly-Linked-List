@@ -1,5 +1,5 @@
 /// SPDX-License-Identifier: MIT
-/// @author Cooki.eth
+/// @author 0xCooki
 pragma solidity ^0.8.8;
 
 import {ptr, createPointer, DLL, NodeLib, Node, NULL_PTR, DoublyLinkedListLib} from "src/DoublyLinkedList.sol";
@@ -10,7 +10,6 @@ struct ScoreCard {
     bool usedBoost;
 }
 
-/// @dev need to use find and each, and make the data structure complicated as a mapping of DLLs?
 contract ScoreBoard {
     using NodeLib for Node;
     using DoublyLinkedListLib for DLL;
@@ -40,6 +39,7 @@ contract ScoreBoard {
     }
 
     /// Find Luke
+
     function findLuke() external view returns (ptr node, uint64 i) {
         (node, i) = board.find(_findLuke, "");
     }
@@ -57,7 +57,7 @@ contract ScoreBoard {
         board.each(_findWinner, "");
         return (nodeWinner, indexWinner);
     }
-    
+
     function _findWinner(ptr _node, uint64 _i, bytes memory) private returns (bool) {
         if (cards[board.valueAt(_node)].score > cards[board.valueAt(nodeWinner)].score) {
             nodeWinner = _node;
@@ -68,6 +68,17 @@ contract ScoreBoard {
 
     /// Reward Non-boosters
 
+    function rewardNonBoosters() external {
+        board.each(_rewardNonBoosters, "");
+    }
 
-
+    function _rewardNonBoosters(ptr _node, uint64, bytes memory) private returns (bool) {
+        if (!cards[board.valueAt(_node)].usedBoost) {
+            ptr newValuePtr = _createPtrForScoreCard(
+                ScoreCard(cards[board.valueAt(_node)].name, cards[board.valueAt(_node)].score + 10, true)
+            );
+            board.update(_node, newValuePtr);
+        }
+        return true;
+    }
 }

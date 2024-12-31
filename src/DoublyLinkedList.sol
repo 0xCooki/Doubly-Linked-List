@@ -1,5 +1,5 @@
 /// SPDX-License-Identifier: MIT
-/// @author Cooki.eth
+/// @author 0xCooki
 pragma solidity ^0.8.8;
 
 type ptr is uint64;
@@ -83,11 +83,6 @@ library DoublyLinkedListLib {
         }
     }
 
-    function clear(DLL storage _dll) internal {
-        _dll.head = _dll.tail = NULL_PTR;
-        _dll.length = 0;
-    }
-
     function find(
         DLL storage _dll,
         function(ptr, uint64, bytes memory) view returns (bool) _isMatch,
@@ -129,12 +124,41 @@ library DoublyLinkedListLib {
         }
     }
 
-    function push(DLL storage _dll, ptr _value) internal {
-        insertBefore(_dll, NULL_PTR, _value);
+    function update(DLL storage _dll, ptr _node, ptr _value) internal {
+        validatePointer(_node);
+        validatePointer(_value);
+        _dll.nodes[_node].validateNode();
+
+        ptr next = _dll.nodes[_node].next;
+        ptr prev = _dll.nodes[_node].prev;
+        _dll.nodes[_node].set(_value, next, prev);
     }
 
-    function pop(DLL storage _dll) internal {
-        remove(_dll, _dll.tail);
+    function insertBefore(DLL storage _dll, ptr _before, ptr _value) internal {
+        validatePointer(_value);
+        ptr node;
+        ptr prev;
+
+        if (isValidPointer(_before)) {
+            ptr beforeValue = _dll.nodes[_before].value;
+            ptr beforeNext = _dll.nodes[_before].next;
+            prev = _dll.nodes[_before].prev;
+            node = _createNode(_dll, _value, _before, prev);
+            _dll.nodes[_before].set(beforeValue, beforeNext, node);
+        } else {
+            prev = _dll.tail;
+            _dll.tail = node = _createNode(_dll, _value, NULL_PTR, prev);
+        }
+
+        if (isValidPointer(prev)) {
+            ptr prevValue = _dll.nodes[prev].value;
+            ptr prevPrev = _dll.nodes[prev].prev;
+            _dll.nodes[prev].set(prevValue, node, prevPrev);
+        } else {
+            _dll.head = node;
+        }
+
+        ++_dll.length;
     }
 
     function remove(DLL storage _dll, ptr _node) internal {
@@ -164,53 +188,25 @@ library DoublyLinkedListLib {
         _dll.nodes[_node].clear();
     }
 
-    /// To insert to the end, pass `NULL_PTR` as `_before`.
-    function insertBefore(DLL storage _dll, ptr _before, ptr _value) internal {
-        validatePointer(_value);
-        ptr node;
-        ptr prev;
-
-        if (isValidPointer(_before)) {
-            ptr beforeValue = _dll.nodes[_before].value;
-            ptr beforeNext = _dll.nodes[_before].next;
-            prev = _dll.nodes[_before].prev;
-            node = _createNode(_dll, _value, _before, prev);
-            _dll.nodes[_before].set(beforeValue, beforeNext, node);
-        } else {
-            prev = _dll.tail;
-            _dll.tail = node = _createNode(_dll, _value, NULL_PTR, prev);
-        }
-
-        if (isValidPointer(prev)) {
-            ptr prevValue = _dll.nodes[prev].value;
-            ptr prevPrev = _dll.nodes[prev].prev;
-            _dll.nodes[prev].set(prevValue, node, prevPrev);
-        } else {
-            _dll.head = node;
-        }
-
-        ++_dll.length;
+    function push(DLL storage _dll, ptr _value) internal {
+        insertBefore(_dll, NULL_PTR, _value);
     }
 
-    function update(DLL storage _dll, ptr _node, ptr _value) internal {
-        validatePointer(_node);
-        validatePointer(_value);
-        _dll.nodes[_node].validateNode();
-
-        ptr next = _dll.nodes[_node].next;
-        ptr prev = _dll.nodes[_node].prev;
-        _dll.nodes[_node].set(_value, next, prev);
+    function pop(DLL storage _dll) internal {
+        remove(_dll, _dll.tail);
     }
 
-    /// HELPERS ///
+    function clear(DLL storage _dll) internal {
+        _dll.head = _dll.tail = NULL_PTR;
+        _dll.length = 0;
+    }
 
     function _createPointer(DLL storage _dll) private returns (ptr) {
         return createPointer(++_dll.counter);
     }
 
-    function _createNode(DLL storage _dll, ptr _value, ptr _next, ptr _prev) private returns (ptr) {
-        ptr newNodePtr = _createPointer(_dll);
+    function _createNode(DLL storage _dll, ptr _value, ptr _next, ptr _prev) private returns (ptr newNodePtr) {
+        newNodePtr = _createPointer(_dll);
         _dll.nodes[newNodePtr].set(_value, _next, _prev);
-        return newNodePtr;
     }
 }
