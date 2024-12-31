@@ -1,4 +1,5 @@
-// SPDX-License-Identifier: MIT
+/// SPDX-License-Identifier: MIT
+/// @author Cooki.eth
 pragma solidity ^0.8.8;
 
 type ptr is uint64;

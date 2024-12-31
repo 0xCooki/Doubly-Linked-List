@@ -1,54 +1,45 @@
-// SPDX-License-Identifier: MIT
+/// SPDX-License-Identifier: MIT
+/// @author Cooki.eth
 pragma solidity ^0.8.8;
 
-import {ptr, createPointer, DLL, NULL_PTR, DoublyLinkedListLib} from "src/DoublyLinkedList.sol";
+import {DoublyLinkedListBytes} from "src/extensions/DoublyLinkedListBytes.sol";
 
-/// @dev shows basic DLL use of indexed adding, removing, and accessing data in the list
-/// should add an amend function too and maybe find a way to use pop and push for a swap
-contract NameRegistry {
-    using DoublyLinkedListLib for DLL;
+contract NameRegistry is DoublyLinkedListBytes {
+    constructor() {
+        addValueAtPosition(0, 'Cooki');
+    }
+}
 
-    mapping(ptr => string) public names;
+contract GatedNameRegistry is DoublyLinkedListBytes {
+    address immutable owner;
 
-    DLL public registry;
-
-    uint64 private counter;
+    modifier onlyOwner {
+        if (msg.sender != owner) revert();
+        _;
+    }
 
     constructor() {
-        ptr cookiPtr = _createPtrForName("Cooki");
-        registry.push(cookiPtr);
+        owner = msg.sender;
+        addValueAtPosition(0, 'Cooki');
     }
 
-    function _createPtrForName(string memory _name) private returns (ptr newPtr) {
-        newPtr = createPointer(++counter);
-        names[newPtr] = _name;
+    function addValueAtPosition(uint64 _i, bytes memory _value) public override onlyOwner {
+        super.addValueAtPosition(_i, _value);
     }
 
-    function nameAtPosition(uint64 i) external view returns (string memory) {
-        require(i < registry.length, "Invalid Position");
-        ptr positionPtr = registry.at(i);
-        ptr valuePtr = registry.valueAt(positionPtr);
-        return names[valuePtr];
+    function amendValueAtPosition(uint64 _i, bytes memory _value) public override onlyOwner {
+        super.amendValueAtPosition(_i, _value);
     }
 
-    function addNameAtPosition(uint64 i, string memory _name) external {
-        uint256 length = registry.length;
-        require(i <= length, "Invalid Position");
-        ptr positionPtr = (i == length) ? NULL_PTR : registry.at(i);
-        ptr valuePtr = _createPtrForName(_name);
-        registry.insertBefore(positionPtr, valuePtr);
+    function removeValueAtPosition(uint64 _i) public override onlyOwner {
+        super.removeValueAtPosition(_i);
     }
 
-    function amendNameAtPosition(uint64 i, string memory _name) external {
-        require(i < registry.length, "Invalid Position");
-        ptr positionPtr = registry.at(i);
-        ptr valuePtr = _createPtrForName(_name);
-        registry.update(positionPtr, valuePtr);
+    function push(bytes memory _value) public override onlyOwner {
+        super.push(_value);
     }
 
-    function removeNameAtPosition(uint64 i) external {
-        require(i < registry.length, "Invalid Position");
-        ptr positionPtr = registry.at(i);
-        registry.remove(positionPtr);
+    function pop() public override onlyOwner {
+        super.pop();
     }
 }

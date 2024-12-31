@@ -1,4 +1,5 @@
-// SPDX-License-Identifier: MIT
+/// SPDX-License-Identifier: MIT
+/// @author Cooki.eth
 pragma solidity ^0.8.8;
 
 import {ptr, createPointer, DLL, NodeLib, Node, NULL_PTR, DoublyLinkedListLib} from "src/DoublyLinkedList.sol";
@@ -49,5 +50,24 @@ contract ScoreBoard {
 
     /// Find Winner
 
+    ptr private nodeWinner;
+    uint64 private indexWinner;
+
+    function findWinner() external returns (ptr node, uint64 i) {
+        board.each(_findWinner, "");
+        return (nodeWinner, indexWinner);
+    }
     
+    function _findWinner(ptr _node, uint64 _i, bytes memory) private returns (bool) {
+        if (cards[board.valueAt(_node)].score > cards[board.valueAt(nodeWinner)].score) {
+            nodeWinner = _node;
+            indexWinner = _i;
+        }
+        return true;
+    }
+
+    /// Reward Non-boosters
+
+
+
 }
