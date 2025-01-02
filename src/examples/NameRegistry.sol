@@ -10,6 +10,7 @@ contract NameRegistry is DoublyLinkedListBytes {
     }
 }
 
+/// Note override all state-changing functions to ensure only the contract creator can modify the list.
 contract GatedNameRegistry is DoublyLinkedListBytes {
     address immutable owner;
 

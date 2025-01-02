@@ -32,7 +32,7 @@ forge install 0xCooki/Doubly-Linked-List
 
 ## Usage
 
-To use the specialised contracts that store a known value type, such as `bytes` as below, simply inport and inherit the contract. Now the doubly linked list of bytes can be accessed and manipulated via the inherited contract and it's functions.
+To use the specialised contracts that store a known value type, such as `bytes` as below, simply inport and inherit the contract. Now the doubly linked list of bytes can be accessed and manipulated via the inherited contract and it's functions. Note that there are no access controls placed on any functions in these specialised contracts by default. 
 
 ```bash
 pragma solidity ^0.8.8;
@@ -46,12 +46,12 @@ contract NameRegistry is DoublyLinkedListBytes {
 }
 ```
 
-For those looking to use a unique data type in their list, such as the `ScoreCard` struct below, the user will need to implement their own storage variables and mapping functionality to connect the value pointers in the list to the stored data.
+For those looking to use a unique data type in their list, such as the `ScoreCard` struct below, they will need to implement their own storage variables and mapping functionality to connect the value pointers in the list to the stored data.
 
 ```bash
 pragma solidity ^0.8.8;
 
-import {ptr, createPointer, DLL, NodeLib, Node, NULL_PTR, DoublyLinkedListLib} from "src/DoublyLinkedList.sol";
+import {ptr, createPointer, DLL, NodeLib, Node, NULL_PTR, DoublyLinkedListLib} from "Doubly-Linked-List/src/DoublyLinkedList.sol";
 
 struct ScoreCard {
     string name;
@@ -80,6 +80,7 @@ contract ScoreBoard {
         cards[newPtr] = _card;
     }
 
+    /// @dev Always keep in mind that the pointer to the node does not equal the value pointer in the node
     function valueAtNode(ptr _ptr) external view returns (ScoreCard memory) {
         ptr valuePtr = board.valueAt(_ptr);
         return cards[valuePtr];
