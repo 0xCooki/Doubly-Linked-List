@@ -21,10 +21,10 @@ contract ScoreBoard {
     uint64 private counter;
 
     constructor() {
-        board.push(_createPtrForScoreCard(ScoreCard("Simon", 50, false)));
+        board.push(_createPtrForScoreCard(ScoreCard("Simon", 21, false)));
         board.push(_createPtrForScoreCard(ScoreCard("James", 77, true)));
         board.push(_createPtrForScoreCard(ScoreCard("Emily", 58, false)));
-        board.push(_createPtrForScoreCard(ScoreCard("Megan", 21, true)));
+        board.push(_createPtrForScoreCard(ScoreCard("Megan", 75, false)));
         board.push(_createPtrForScoreCard(ScoreCard("Willis", 40, false)));
         board.push(_createPtrForScoreCard(ScoreCard("Luke", 71, false)));
         board.push(_createPtrForScoreCard(ScoreCard("Viktor", 39, true)));
@@ -38,7 +38,12 @@ contract ScoreBoard {
         cards[newPtr] = _card;
     }
 
-    /// Find Luke
+    function valueAtNode(ptr _ptr) external view returns (ScoreCard memory) {
+        ptr valuePtr = board.valueAt(_ptr);
+        return cards[valuePtr];
+    }
+
+    /// FIND LUKE ///
 
     function findLuke() external view returns (ptr node, uint64 i) {
         (node, i) = board.find(_findLuke, "");
@@ -48,7 +53,7 @@ contract ScoreBoard {
         return (keccak256(abi.encodePacked(cards[board.valueAt(_node)].name)) == keccak256(abi.encodePacked("Luke")));
     }
 
-    /// Find Winner
+    /// FIND WINNER ///
 
     ptr private nodeWinner;
     uint64 private indexWinner;
@@ -66,7 +71,7 @@ contract ScoreBoard {
         return true;
     }
 
-    /// Reward Non-boosters
+    /// REWARD NON-BOOSTERS ///
 
     function rewardNonBoosters() external {
         board.each(_rewardNonBoosters, "");
