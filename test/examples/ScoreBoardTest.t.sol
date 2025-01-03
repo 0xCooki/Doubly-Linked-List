@@ -16,7 +16,7 @@ contract ScoreBoardTest is Test {
         scoreBoard = new ScoreBoard();
     }
 
-    function testFindLuke() public {
+    function testFindLuke() public view {
         (ptr lukePtr,) = scoreBoard.findLuke();
         (string memory name,,) = scoreBoard.cards(lukePtr);
         assertEq(name, "Luke");

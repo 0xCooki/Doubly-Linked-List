@@ -65,6 +65,14 @@ library DoublyLinkedListLib {
         node = _dll.nodes[_node].value;
     }
 
+    function nextAt(DLL storage _dll, ptr _node) internal view returns (ptr node) {
+        node = _dll.nodes[_node].next;
+    }
+
+    function prevAt(DLL storage _dll, ptr _node) internal view returns (ptr node) {
+        node = _dll.nodes[_node].prev;
+    }
+
     function at(DLL storage _dll, uint64 i) internal view returns (ptr node) {
         uint64 length = _dll.length;
         if (i >= length) revert InvalidLength();
