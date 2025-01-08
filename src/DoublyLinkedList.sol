@@ -61,16 +61,16 @@ library NodeLib {
 library DoublyLinkedListLib {
     using NodeLib for Node;
 
-    function valueAt(DLL storage _dll, ptr _node) internal view returns (ptr node) {
-        node = _dll.nodes[_node].value;
+    function valueAt(DLL storage _dll, ptr _node) internal view returns (ptr value) {
+        value = _dll.nodes[_node].value;
     }
 
-    function nextAt(DLL storage _dll, ptr _node) internal view returns (ptr node) {
-        node = _dll.nodes[_node].next;
+    function nextAt(DLL storage _dll, ptr _node) internal view returns (ptr next) {
+        next = _dll.nodes[_node].next;
     }
 
-    function prevAt(DLL storage _dll, ptr _node) internal view returns (ptr node) {
-        node = _dll.nodes[_node].prev;
+    function prevAt(DLL storage _dll, ptr _node) internal view returns (ptr prev) {
+        prev = _dll.nodes[_node].prev;
     }
 
     function at(DLL storage _dll, uint64 i) internal view returns (ptr node) {
@@ -111,11 +111,11 @@ library DoublyLinkedListLib {
         bytes memory _data
     ) internal view returns (ptr node, uint64 i) {
         node = _dll.tail;
-        i = _dll.length;
+        i = (_dll.length == 0) ? 0 : _dll.length - 1;
         while (isValidPointer(node)) {
             if (_isMatch(node, i, _data)) return (node, i);
             node = _dll.nodes[node].prev;
-            --i;
+            if (i != 0) --i;
         }
         return (NULL_PTR, ~uint64(0));
     }
@@ -132,11 +132,22 @@ library DoublyLinkedListLib {
         }
     }
 
+    function reach(DLL storage _dll, function(ptr, uint64, bytes memory) returns (bool) _onEach, bytes memory _data)
+        internal
+    {
+        uint64 i = (_dll.length == 0) ? 0 : _dll.length - 1;
+        ptr node = _dll.tail;
+        while (isValidPointer(node)) {
+            if (!_onEach(node, i, _data)) break;
+            node = _dll.nodes[node].prev;
+            if (i != 0) --i;
+        }
+    }
+
     function update(DLL storage _dll, ptr _node, ptr _value) internal {
         validatePointer(_node);
         validatePointer(_value);
         _dll.nodes[_node].validateNode();
-
         ptr next = _dll.nodes[_node].next;
         ptr prev = _dll.nodes[_node].prev;
         _dll.nodes[_node].set(_value, next, prev);
@@ -146,7 +157,6 @@ library DoublyLinkedListLib {
         validatePointer(_value);
         ptr node;
         ptr prev;
-
         if (isValidPointer(_before)) {
             ptr beforeValue = _dll.nodes[_before].value;
             ptr beforeNext = _dll.nodes[_before].next;
@@ -157,7 +167,6 @@ library DoublyLinkedListLib {
             prev = _dll.tail;
             _dll.tail = node = _createNode(_dll, _value, NULL_PTR, prev);
         }
-
         if (isValidPointer(prev)) {
             ptr prevValue = _dll.nodes[prev].value;
             ptr prevPrev = _dll.nodes[prev].prev;
@@ -165,17 +174,14 @@ library DoublyLinkedListLib {
         } else {
             _dll.head = node;
         }
-
         ++_dll.length;
     }
 
     function remove(DLL storage _dll, ptr _node) internal {
         validatePointer(_node);
         _dll.nodes[_node].validateNode();
-
         ptr next = _dll.nodes[_node].next;
         ptr prev = _dll.nodes[_node].prev;
-
         if (isValidPointer(prev)) {
             ptr prevValue = _dll.nodes[prev].value;
             ptr prevPrev = _dll.nodes[prev].prev;
@@ -183,7 +189,6 @@ library DoublyLinkedListLib {
         } else {
             _dll.head = next;
         }
-
         if (isValidPointer(next)) {
             ptr nextValue = _dll.nodes[next].value;
             ptr nextNext = _dll.nodes[next].next;
@@ -191,7 +196,6 @@ library DoublyLinkedListLib {
         } else {
             _dll.tail = prev;
         }
-
         --_dll.length;
         _dll.nodes[_node].clear();
     }

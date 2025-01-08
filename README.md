@@ -80,7 +80,7 @@ contract ScoreBoard {
         cards[newPtr] = _card;
     }
 
-    /// @dev Always keep in mind that the pointer to the node does not equal the value pointer in the node
+    # Always keep in mind that the pointer to the node does not equal the value pointer in the node
     function valueAtNode(ptr _ptr) external view returns (ScoreCard memory) {
         ptr valuePtr = board.valueAt(_ptr);
         return cards[valuePtr];
