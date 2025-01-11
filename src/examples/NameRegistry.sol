@@ -12,7 +12,7 @@ contract NameRegistry is DoublyLinkedListBytes {
 
 /// Note override all state-changing functions to ensure only the contract creator can modify the list.
 contract GatedNameRegistry is DoublyLinkedListBytes {
-    address immutable owner;
+    address public immutable owner;
 
     modifier onlyOwner() {
         if (msg.sender != owner) revert();
@@ -21,7 +21,12 @@ contract GatedNameRegistry is DoublyLinkedListBytes {
 
     constructor() {
         owner = msg.sender;
-        addValueAtPosition(0, "Cooki");
+        addValueAtPosition(0, "Cookie");
+        amendValueAtPosition(0, "Cooki");
+        removeValueAtPosition(0);
+        push('Cooki');
+        push('Cookie');
+        pop();
     }
 
     function addValueAtPosition(uint64 _i, bytes memory _value) public override onlyOwner {

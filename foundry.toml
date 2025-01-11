@@ -2,3 +2,10 @@
 src = "src"
 out = "out"
 libs = ['lib']
+gas_reports = [
+    'NameRegistry',
+    'ScoreBoard',
+    'DoublyLinkedListAddress',
+    'DoublyLinkedListBytes',
+    'DoublyLinkedListUint256'
+]

@@ -7,9 +7,6 @@ import {ScoreBoard, ScoreCard} from "src/examples/ScoreBoard.sol";
 import {Test, console} from "forge-std/Test.sol";
 
 contract ScoreBoardTest is Test {
-    using NodeLib for Node;
-    using DoublyLinkedListLib for DLL;
-
     ScoreBoard public scoreBoard;
 
     function setUp() public {
