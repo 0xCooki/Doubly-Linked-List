@@ -96,6 +96,8 @@ More example implementations can be accessed in [examples](src/extensions).
 ```bash
 # Clone the repo and enter
 git clone git@github.com:0xCooki/Doubly-Linked-List.git && cd Doubly-Linked-List
+# Install dependencies
+forge install
 # Build
 forge build
 # Run tests
