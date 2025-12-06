@@ -6,11 +6,33 @@ import {ptr, Node, DLL, NodeLib, DoublyLinkedListLib, isValidPointer, validatePo
 import {DoublyLinkedListBytes} from "src/extensions/DoublyLinkedListBytes.sol";
 import {Test, console} from "forge-std/Test.sol";
 
+contract MockDoublyLinkedListBytes is DoublyLinkedListBytes {
+    function addValueAtPosition(uint64 _i, bytes memory _value) public {
+        _addValueAtPosition(_i, _value);
+    }
+
+    function amendValueAtPosition(uint64 _i, bytes memory _value) public {
+        _amendValueAtPosition(_i, _value);
+    }
+
+    function removeValueAtPosition(uint64 _i) public {
+        _removeValueAtPosition(_i);
+    }
+
+    function push(bytes memory _value) public {
+        _push(_value);
+    }
+
+    function pop() public {
+        _pop();
+    }
+}
+
 contract DoublyLinkedListBytesTest is Test {
-    DoublyLinkedListBytes public dllBytes;
+    MockDoublyLinkedListBytes public dllBytes;
 
     function setUp() public {
-        dllBytes = new DoublyLinkedListBytes();
+        dllBytes = new MockDoublyLinkedListBytes();
     }
 
     function testInit() public view {

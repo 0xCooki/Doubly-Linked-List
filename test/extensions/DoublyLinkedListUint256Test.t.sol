@@ -6,11 +6,33 @@ import {ptr, Node, DLL, NodeLib, DoublyLinkedListLib, isValidPointer, validatePo
 import {DoublyLinkedListUint256} from "src/extensions/DoublyLinkedListUint256.sol";
 import {Test, console} from "forge-std/Test.sol";
 
+contract MockDoublyLinkedListUint256 is DoublyLinkedListUint256 {
+    function addValueAtPosition(uint64 _i, uint256 _value) public {
+        _addValueAtPosition(_i, _value);
+    }
+
+    function amendValueAtPosition(uint64 _i, uint256 _value) public {
+        _amendValueAtPosition(_i, _value);
+    }
+
+    function removeValueAtPosition(uint64 _i) public {
+        _removeValueAtPosition(_i);
+    }
+
+    function push(uint256 _value) public {
+        _push(_value);
+    }
+
+    function pop() public {
+        _pop();
+    }
+}
+
 contract DoublyLinkedListUint256Test is Test {
-    DoublyLinkedListUint256 public dllUint256;
+    MockDoublyLinkedListUint256 public dllUint256;
 
     function setUp() public {
-        dllUint256 = new DoublyLinkedListUint256();
+        dllUint256 = new MockDoublyLinkedListUint256();
     }
 
     function testInit() public view {

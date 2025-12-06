@@ -15,37 +15,6 @@ contract DoublyLinkedListBytes {
 
     error InvalidPosition();
 
-    /// PUBLIC ///
-
-    function addValueAtPosition(uint64 _i, bytes memory _value) public virtual {
-        if (_i > list.length) revert InvalidPosition();
-        ptr positionPtr = (_i == list.length) ? NULL_PTR : list.at(_i);
-        ptr valuePtr = _createPtrForValue(_value);
-        list.insertBefore(positionPtr, valuePtr);
-    }
-
-    function amendValueAtPosition(uint64 _i, bytes memory _value) public virtual {
-        if (_i >= list.length) revert InvalidPosition();
-        ptr positionPtr = list.at(_i);
-        ptr valuePtr = _createPtrForValue(_value);
-        list.update(positionPtr, valuePtr);
-    }
-
-    function removeValueAtPosition(uint64 _i) public virtual {
-        if (_i >= list.length) revert InvalidPosition();
-        ptr positionPtr = list.at(_i);
-        list.remove(positionPtr);
-    }
-
-    function push(bytes memory _value) public virtual {
-        ptr valuePtr = _createPtrForValue(_value);
-        list.insertBefore(NULL_PTR, valuePtr);
-    }
-
-    function pop() public virtual {
-        list.remove(list.tail);
-    }
-
     /// VIEW ///
 
     function valueAtPosition(uint64 _i) public view virtual returns (bytes memory) {
@@ -59,7 +28,36 @@ contract DoublyLinkedListBytes {
         return list.length;
     }
 
-    /// PRIVATE ///
+    /// INTERNAL ///
+
+    function _addValueAtPosition(uint64 _i, bytes memory _value) internal virtual {
+        if (_i > list.length) revert InvalidPosition();
+        ptr positionPtr = (_i == list.length) ? NULL_PTR : list.at(_i);
+        ptr valuePtr = _createPtrForValue(_value);
+        list.insertBefore(positionPtr, valuePtr);
+    }
+
+    function _amendValueAtPosition(uint64 _i, bytes memory _value) internal virtual {
+        if (_i >= list.length) revert InvalidPosition();
+        ptr positionPtr = list.at(_i);
+        ptr valuePtr = _createPtrForValue(_value);
+        list.update(positionPtr, valuePtr);
+    }
+
+    function _removeValueAtPosition(uint64 _i) internal virtual {
+        if (_i >= list.length) revert InvalidPosition();
+        ptr positionPtr = list.at(_i);
+        list.remove(positionPtr);
+    }
+
+    function _push(bytes memory _value) internal virtual {
+        ptr valuePtr = _createPtrForValue(_value);
+        list.insertBefore(NULL_PTR, valuePtr);
+    }
+
+    function _pop() internal virtual {
+        list.remove(list.tail);
+    }
 
     function _createPtrForValue(bytes memory _value) private returns (ptr newPtr) {
         newPtr = createPointer(++counter);

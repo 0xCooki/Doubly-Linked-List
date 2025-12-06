@@ -6,11 +6,33 @@ import {ptr, Node, DLL, NodeLib, DoublyLinkedListLib, isValidPointer, validatePo
 import {DoublyLinkedListAddress} from "src/extensions/DoublyLinkedListAddress.sol";
 import {Test, console} from "forge-std/Test.sol";
 
+contract MockDoublyLinkedListAddress is DoublyLinkedListAddress {
+    function addValueAtPosition(uint64 _i, address _value) public {
+        _addValueAtPosition(_i, _value);
+    }
+
+    function amendValueAtPosition(uint64 _i, address _value) public {
+        _amendValueAtPosition(_i, _value);
+    }
+
+    function removeValueAtPosition(uint64 _i) public {
+        _removeValueAtPosition(_i);
+    }
+
+    function push(address _value) public {
+        _push(_value);
+    }
+
+    function pop() public {
+        _pop();
+    }
+}
+
 contract DoublyLinkedListAddressTest is Test {
-    DoublyLinkedListAddress public dllAddress;
+    MockDoublyLinkedListAddress public dllAddress;
 
     function setUp() public {
-        dllAddress = new DoublyLinkedListAddress();
+        dllAddress = new MockDoublyLinkedListAddress();
     }
 
     function testInit() public view {
