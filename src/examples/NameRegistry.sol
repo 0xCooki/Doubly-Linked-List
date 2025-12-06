@@ -24,8 +24,8 @@ contract GatedNameRegistry is DoublyLinkedListBytes {
         addValueAtPosition(0, "Cookie");
         amendValueAtPosition(0, "Cooki");
         removeValueAtPosition(0);
-        push('Cooki');
-        push('Cookie');
+        push("Cooki");
+        push("Cookie");
         pop();
     }
 

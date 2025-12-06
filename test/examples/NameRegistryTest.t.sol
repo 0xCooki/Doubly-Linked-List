@@ -87,13 +87,13 @@ contract GatedNameRegistryTest is Test {
         vm.assume(_caller != address(this));
         vm.startPrank(_caller);
         vm.expectRevert();
-        gatedNameRegistry.addValueAtPosition(0, 'Sarah');
+        gatedNameRegistry.addValueAtPosition(0, "Sarah");
         vm.expectRevert();
-        gatedNameRegistry.amendValueAtPosition(0, 'Sarah');
+        gatedNameRegistry.amendValueAtPosition(0, "Sarah");
         vm.expectRevert();
         gatedNameRegistry.removeValueAtPosition(0);
         vm.expectRevert();
-        gatedNameRegistry.push('Sarah');
+        gatedNameRegistry.push("Sarah");
         vm.expectRevert();
         gatedNameRegistry.pop();
         vm.stopPrank();

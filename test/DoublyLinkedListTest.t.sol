@@ -16,7 +16,7 @@ import {
     NodeLib,
     DoublyLinkedListLib
 } from "src/DoublyLinkedList.sol";
-import {Test, console} from "forge-std/Test.sol";
+import {Test, console, StdStorage, stdStorage} from "forge-std/Test.sol";
 
 contract PtrTest is Test {
     function testCreatePointer(uint64 _seed) public pure {
@@ -106,6 +106,7 @@ contract DLLTestHelpers {
 
 contract DoublyLinkedListTest is Test, DLLTestHelpers {
     using DoublyLinkedListLib for DLL;
+    using stdStorage for StdStorage;
 
     DLL public list;
 
@@ -114,6 +115,19 @@ contract DoublyLinkedListTest is Test, DLLTestHelpers {
         assertEq(list.length, 0);
         assertEq(isValidPointer(list.head), false);
         assertEq(isValidPointer(list.tail), false);
+    }
+
+    function testStoragePacking() public {
+        list.counter = 0x1111111111111111;
+        list.length = 0x2222222222222222;
+        list.head = ptr.wrap(0x3333333333333333);
+        list.tail = ptr.wrap(0x4444444444444444);
+        uint256 slotNumber = stdstore.enable_packed_slots().target(address(this)).sig("list()").depth(0).find();
+        bytes32 slot = vm.load(address(this), bytes32(slotNumber));
+        assertEq(uint64(uint256(slot)), 0x1111111111111111, "counter");
+        assertEq(uint64(uint256(slot) >> 64), 0x2222222222222222, "length");
+        assertEq(uint64(uint256(slot) >> 128), 0x3333333333333333, "head");
+        assertEq(uint64(uint256(slot) >> 192), 0x4444444444444444, "tail");
     }
 
     function testValueAt(uint64 _seed) public {
@@ -325,6 +339,10 @@ contract DoublyLinkedListTest is Test, DLLTestHelpers {
         list.push(createPointer(_seed++));
         list.push(createPointer(_seed++));
         list.push(createPointer(_seed));
+
+        /// get pointer for current head
+        ptr currentHead = list.head;
+
         assertEq(list.length, 3);
         assertEq(isValidPointer(list.head), true);
         assertEq(isValidPointer(list.tail), true);
@@ -332,5 +350,8 @@ contract DoublyLinkedListTest is Test, DLLTestHelpers {
         assertEq(list.length, 0);
         assertEq(isValidPointer(list.head), false);
         assertEq(isValidPointer(list.tail), false);
+
+        /// But it persists in the list
+        assertEq(ptr.unwrap(list.valueAt(currentHead)), _seed - 2);
     }
 }

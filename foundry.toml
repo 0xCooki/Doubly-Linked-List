@@ -9,3 +9,4 @@ gas_reports = [
     'DoublyLinkedListBytes',
     'DoublyLinkedListUint256'
 ]
+allow_internal_expect_revert = true
