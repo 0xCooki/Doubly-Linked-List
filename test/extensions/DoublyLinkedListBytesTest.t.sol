@@ -14,12 +14,13 @@ contract DoublyLinkedListBytesTest is Test {
     }
 
     function testInit() public view {
-        (uint64 counter, uint64 length, ptr head, ptr tail) = dllBytes.list();
+        (uint64 counter, uint64 length, ptr head, ptr tail, uint64 version) = dllBytes.list();
         assertEq(counter, 0);
         assertEq(length, 0);
         assertEq(ptr.unwrap(head), 0);
         assertEq(ptr.unwrap(tail), 0);
         assertEq(dllBytes.length(), 0);
+        assertEq(version, 0);
     }
 
     function testAddValueAtPosition(bytes calldata _value) public {
@@ -29,22 +30,24 @@ contract DoublyLinkedListBytesTest is Test {
         dllBytes.valueAtPosition(0);
         /// Add at position zero
         dllBytes.addValueAtPosition(0, _value);
-        (uint64 counter, uint64 length, ptr head, ptr tail) = dllBytes.list();
+        (uint64 counter, uint64 length, ptr head, ptr tail, uint64 version) = dllBytes.list();
         assertEq(counter, 1);
         assertEq(length, 1);
         assertEq(ptr.unwrap(head), 1);
         assertEq(ptr.unwrap(tail), 1);
         assertEq(dllBytes.length(), 1);
         assertEq(dllBytes.valueAtPosition(0), _value);
+        assertEq(version, 0);
         /// Add at position one
         dllBytes.addValueAtPosition(1, _value);
-        (counter, length, head, tail) = dllBytes.list();
+        (counter, length, head, tail, version) = dllBytes.list();
         assertEq(counter, 2);
         assertEq(length, 2);
         assertEq(ptr.unwrap(head), 1);
         assertEq(ptr.unwrap(tail), 2);
         assertEq(dllBytes.length(), 2);
         assertEq(dllBytes.valueAtPosition(1), _value);
+        assertEq(version, 0);
     }
 
     function testAmendValueAtPosition(bytes calldata _value0, bytes calldata _value1) public {
@@ -62,7 +65,7 @@ contract DoublyLinkedListBytesTest is Test {
         dllBytes.push(_value0);
         dllBytes.push(_value0);
         dllBytes.push(_value1);
-        (uint64 counter, uint64 length, ptr head, ptr tail) = dllBytes.list();
+        (uint64 counter, uint64 length, ptr head, ptr tail, uint64 version) = dllBytes.list();
         assertEq(counter, 3);
         assertEq(length, 3);
         assertEq(ptr.unwrap(head), 1);
@@ -71,9 +74,10 @@ contract DoublyLinkedListBytesTest is Test {
         assertEq(dllBytes.valueAtPosition(0), _value0);
         assertEq(dllBytes.valueAtPosition(1), _value0);
         assertEq(dllBytes.valueAtPosition(2), _value1);
+        assertEq(version, 0);
         /// Remove second value
         dllBytes.removeValueAtPosition(1);
-        (counter, length, head, tail) = dllBytes.list();
+        (counter, length, head, tail, version) = dllBytes.list();
         assertEq(counter, 3);
         assertEq(length, 2);
         assertEq(ptr.unwrap(head), 1);
@@ -81,6 +85,7 @@ contract DoublyLinkedListBytesTest is Test {
         assertEq(dllBytes.length(), 2);
         assertEq(dllBytes.valueAtPosition(0), _value0);
         assertEq(dllBytes.valueAtPosition(1), _value1);
+        assertEq(version, 0);
     }
 
     function testPop(bytes calldata _value) public {
@@ -88,11 +93,12 @@ contract DoublyLinkedListBytesTest is Test {
         dllBytes.pop();
         dllBytes.push(_value);
         dllBytes.pop();
-        (uint64 counter, uint64 length, ptr head, ptr tail) = dllBytes.list();
+        (uint64 counter, uint64 length, ptr head, ptr tail, uint64 version) = dllBytes.list();
         assertEq(counter, 1);
         assertEq(length, 0);
         assertEq(ptr.unwrap(head), 0);
         assertEq(ptr.unwrap(tail), 0);
         assertEq(dllBytes.length(), 0);
+        assertEq(version, 0);
     }
 }

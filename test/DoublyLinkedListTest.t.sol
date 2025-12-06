@@ -9,6 +9,7 @@ import {
     NULL_PTR,
     InvalidPointer,
     InvalidLength,
+    InvalidNode,
     ListEmpty,
     createPointer,
     isValidPointer,
@@ -50,21 +51,30 @@ contract NodeTest is Test {
         assertEq(isValidPointer(node.value), false);
         assertEq(isValidPointer(node.next), false);
         assertEq(isValidPointer(node.prev), false);
+        assertEq(node.v, 0);
     }
 
-    function testIsValidNode() public view {
-        assertEq(node.isValidNode(), false);
+    function testIsValidNode(uint64 _seed) public {
+        vm.assume(_seed != 0);
+        assertEq(node.isValidNode(_seed), false);
+        node.value = ptr.wrap(_seed);
+        assertEq(node.isValidNode(_seed), false);
+        assertEq(node.isValidNode(node.v), true);
     }
 
-    function testValidateNode() public {
-        vm.expectRevert(InvalidPointer.selector);
-        node.validateNode();
+    function testValidateNode(uint64 _seed) public {
+        vm.assume(_seed != 0);
+        vm.expectRevert(InvalidNode.selector);
+        node.validateNode(node.v);
+        node.value = ptr.wrap(_seed);
+        vm.expectRevert(InvalidNode.selector);
+        node.validateNode(_seed);
     }
 
     function testSet(uint64 _seed) public {
         vm.assume(_seed != 0);
         ptr newPtr = createPointer(_seed);
-        node.set(newPtr, newPtr, newPtr);
+        node.set(newPtr, newPtr, newPtr, ptr.unwrap(newPtr));
         assertEq(isValidPointer(node.value), true);
         assertEq(isValidPointer(node.next), true);
         assertEq(isValidPointer(node.prev), true);
@@ -76,7 +86,7 @@ contract NodeTest is Test {
     function testClear(uint64 _seed) public {
         vm.assume(_seed != 0);
         ptr newPtr = createPointer(_seed);
-        node.set(newPtr, newPtr, newPtr);
+        node.set(newPtr, newPtr, newPtr, ptr.unwrap(newPtr));
         node.clear();
         assertEq(isValidPointer(node.value), false);
         assertEq(isValidPointer(node.next), false);
@@ -339,10 +349,9 @@ contract DoublyLinkedListTest is Test, DLLTestHelpers {
         list.push(createPointer(_seed++));
         list.push(createPointer(_seed++));
         list.push(createPointer(_seed));
-
-        /// get pointer for current head
-        ptr currentHead = list.head;
-
+        ptr a = list.head;
+        ptr b = list.nextAt(list.head);
+        ptr c = list.tail;
         assertEq(list.length, 3);
         assertEq(isValidPointer(list.head), true);
         assertEq(isValidPointer(list.tail), true);
@@ -350,8 +359,8 @@ contract DoublyLinkedListTest is Test, DLLTestHelpers {
         assertEq(list.length, 0);
         assertEq(isValidPointer(list.head), false);
         assertEq(isValidPointer(list.tail), false);
-
-        /// But it persists in the list
-        assertEq(ptr.unwrap(list.valueAt(currentHead)), _seed - 2);
+        assertEq(ptr.unwrap(list.valueAt(a)), 0);
+        assertEq(ptr.unwrap(list.valueAt(b)), 0);
+        assertEq(ptr.unwrap(list.valueAt(c)), 0);
     }
 }

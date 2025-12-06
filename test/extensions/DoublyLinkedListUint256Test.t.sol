@@ -14,12 +14,13 @@ contract DoublyLinkedListUint256Test is Test {
     }
 
     function testInit() public view {
-        (uint64 counter, uint64 length, ptr head, ptr tail) = dllUint256.list();
+        (uint64 counter, uint64 length, ptr head, ptr tail, uint64 version) = dllUint256.list();
         assertEq(counter, 0);
         assertEq(length, 0);
         assertEq(ptr.unwrap(head), 0);
         assertEq(ptr.unwrap(tail), 0);
         assertEq(dllUint256.length(), 0);
+        assertEq(version, 0);
     }
 
     function testAddValueAtPosition(uint256 _value) public {
@@ -29,22 +30,24 @@ contract DoublyLinkedListUint256Test is Test {
         dllUint256.valueAtPosition(0);
         /// Add at position zero
         dllUint256.addValueAtPosition(0, _value);
-        (uint64 counter, uint64 length, ptr head, ptr tail) = dllUint256.list();
+        (uint64 counter, uint64 length, ptr head, ptr tail, uint64 version) = dllUint256.list();
         assertEq(counter, 1);
         assertEq(length, 1);
         assertEq(ptr.unwrap(head), 1);
         assertEq(ptr.unwrap(tail), 1);
         assertEq(dllUint256.length(), 1);
         assertEq(dllUint256.valueAtPosition(0), _value);
+        assertEq(version, 0);
         /// Add at position one
         dllUint256.addValueAtPosition(1, _value);
-        (counter, length, head, tail) = dllUint256.list();
+        (counter, length, head, tail, version) = dllUint256.list();
         assertEq(counter, 2);
         assertEq(length, 2);
         assertEq(ptr.unwrap(head), 1);
         assertEq(ptr.unwrap(tail), 2);
         assertEq(dllUint256.length(), 2);
         assertEq(dllUint256.valueAtPosition(1), _value);
+        assertEq(version, 0);
     }
 
     function testAmendValueAtPosition(uint256 _value0, uint256 _value1) public {
@@ -62,7 +65,7 @@ contract DoublyLinkedListUint256Test is Test {
         dllUint256.push(_value0);
         dllUint256.push(_value0);
         dllUint256.push(_value1);
-        (uint64 counter, uint64 length, ptr head, ptr tail) = dllUint256.list();
+        (uint64 counter, uint64 length, ptr head, ptr tail, uint64 version) = dllUint256.list();
         assertEq(counter, 3);
         assertEq(length, 3);
         assertEq(ptr.unwrap(head), 1);
@@ -71,9 +74,10 @@ contract DoublyLinkedListUint256Test is Test {
         assertEq(dllUint256.valueAtPosition(0), _value0);
         assertEq(dllUint256.valueAtPosition(1), _value0);
         assertEq(dllUint256.valueAtPosition(2), _value1);
+        assertEq(version, 0);
         /// Remove second value
         dllUint256.removeValueAtPosition(1);
-        (counter, length, head, tail) = dllUint256.list();
+        (counter, length, head, tail, version) = dllUint256.list();
         assertEq(counter, 3);
         assertEq(length, 2);
         assertEq(ptr.unwrap(head), 1);
@@ -81,6 +85,7 @@ contract DoublyLinkedListUint256Test is Test {
         assertEq(dllUint256.length(), 2);
         assertEq(dllUint256.valueAtPosition(0), _value0);
         assertEq(dllUint256.valueAtPosition(1), _value1);
+        assertEq(version, 0);
     }
 
     function testPop(uint256 _value) public {
@@ -88,11 +93,12 @@ contract DoublyLinkedListUint256Test is Test {
         dllUint256.pop();
         dllUint256.push(_value);
         dllUint256.pop();
-        (uint64 counter, uint64 length, ptr head, ptr tail) = dllUint256.list();
+        (uint64 counter, uint64 length, ptr head, ptr tail, uint64 version) = dllUint256.list();
         assertEq(counter, 1);
         assertEq(length, 0);
         assertEq(ptr.unwrap(head), 0);
         assertEq(ptr.unwrap(tail), 0);
         assertEq(dllUint256.length(), 0);
+        assertEq(version, 0);
     }
 }

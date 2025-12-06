@@ -14,11 +14,12 @@ contract NameRegistryTest is Test {
     }
 
     function testInit() public view {
-        (uint64 counter, uint64 length, ptr head, ptr tail) = nameRegistry.list();
+        (uint64 counter, uint64 length, ptr head, ptr tail, uint64 version) = nameRegistry.list();
         assertEq(counter, 1);
         assertEq(length, 1);
         assertEq(ptr.unwrap(head), 1);
         assertEq(ptr.unwrap(tail), 1);
+        assertEq(version, 0);
         bytes memory cooki = nameRegistry.valueAtPosition(0);
         assertEq(cooki, "Cooki");
     }
@@ -27,20 +28,22 @@ contract NameRegistryTest is Test {
         /// Push two
         nameRegistry.addValueAtPosition(1, "Sarah");
         nameRegistry.addValueAtPosition(1, "Billy");
-        (uint64 counter, uint64 length, ptr head, ptr tail) = nameRegistry.list();
+        (uint64 counter, uint64 length, ptr head, ptr tail, uint64 version) = nameRegistry.list();
         assertEq(counter, 3);
         assertEq(length, 3);
         assertEq(ptr.unwrap(head), 1);
         assertEq(ptr.unwrap(tail), 2);
+        assertEq(version, 0);
         bytes memory returned = nameRegistry.valueAtPosition(2);
         assertEq(returned, "Sarah");
         /// Add one to the front
         nameRegistry.addValueAtPosition(0, "Claire");
-        (counter, length, head, tail) = nameRegistry.list();
+        (counter, length, head, tail, version) = nameRegistry.list();
         assertEq(counter, 4);
         assertEq(length, 4);
         assertEq(ptr.unwrap(head), 4);
         assertEq(ptr.unwrap(tail), 2);
+        assertEq(version, 0);
         /// Cooki now in second position
         returned = nameRegistry.valueAtPosition(1);
         assertEq(returned, "Cooki");
@@ -50,18 +53,20 @@ contract NameRegistryTest is Test {
         /// Push two to the beginning
         nameRegistry.addValueAtPosition(0, "Sarah");
         nameRegistry.addValueAtPosition(0, "Billy");
-        (uint64 counter, uint64 length, ptr head, ptr tail) = nameRegistry.list();
+        (uint64 counter, uint64 length, ptr head, ptr tail, uint64 version) = nameRegistry.list();
         assertEq(counter, 3);
         assertEq(length, 3);
         assertEq(ptr.unwrap(head), 3);
         assertEq(ptr.unwrap(tail), 1);
+        assertEq(version, 0);
         /// Delete sarah
         nameRegistry.removeValueAtPosition(1);
-        (counter, length, head, tail) = nameRegistry.list();
+        (counter, length, head, tail, version) = nameRegistry.list();
         assertEq(counter, 3);
         assertEq(length, 2);
         assertEq(ptr.unwrap(head), 3);
         assertEq(ptr.unwrap(tail), 1);
+        assertEq(version, 0);
     }
 }
 
@@ -74,11 +79,12 @@ contract GatedNameRegistryTest is Test {
 
     function testInit() public view {
         assertEq(gatedNameRegistry.owner(), address(this));
-        (uint64 counter, uint64 length, ptr head, ptr tail) = gatedNameRegistry.list();
+        (uint64 counter, uint64 length, ptr head, ptr tail, uint64 version) = gatedNameRegistry.list();
         assertEq(counter, 3);
         assertEq(length, 1);
         assertEq(ptr.unwrap(head), 2);
         assertEq(ptr.unwrap(tail), 2);
+        assertEq(version, 0);
         bytes memory cooki = gatedNameRegistry.valueAtPosition(0);
         assertEq(cooki, "Cooki");
     }
