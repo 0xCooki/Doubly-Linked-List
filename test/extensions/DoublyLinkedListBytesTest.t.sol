@@ -2,9 +2,9 @@
 /// @author 0xCooki
 pragma solidity ^0.8.8;
 
-import {ptr, Node, DLL, NodeLib, DoublyLinkedListLib, isValidPointer, validatePointer} from "src/DoublyLinkedList.sol";
+import {ptr} from "src/DoublyLinkedList.sol";
 import {DoublyLinkedListBytes} from "src/extensions/DoublyLinkedListBytes.sol";
-import {Test, console} from "forge-std/Test.sol";
+import {Test} from "forge-std/Test.sol";
 
 contract MockDoublyLinkedListBytes is DoublyLinkedListBytes {
     function addValueAtPosition(uint64 _i, bytes memory _value) public {

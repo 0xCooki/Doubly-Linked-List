@@ -5,8 +5,11 @@ libs = ['lib']
 gas_reports = [
     'NameRegistry',
     'ScoreBoard',
-    'DoublyLinkedListAddress',
-    'DoublyLinkedListBytes',
-    'DoublyLinkedListUint256'
+    'MockDoublyLinkedListAddress',
+    'MockDoublyLinkedListBytes',
+    'MockDoublyLinkedListUint256'
 ]
 allow_internal_expect_revert = true
+
+[fuzz]
+runs = 10_000

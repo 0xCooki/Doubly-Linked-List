@@ -2,7 +2,7 @@
 /// @author 0xCooki
 pragma solidity ^0.8.8;
 
-import {ptr, createPointer, DLL, NodeLib, Node, NULL_PTR, DoublyLinkedListLib} from "src/DoublyLinkedList.sol";
+import {ptr, createPointer, DLL, NodeLib, Node, DoublyLinkedListLib} from "src/DoublyLinkedList.sol";
 
 struct ScoreCard {
     string name;

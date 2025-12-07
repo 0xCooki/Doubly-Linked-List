@@ -17,7 +17,7 @@ import {
     NodeLib,
     DoublyLinkedListLib
 } from "src/DoublyLinkedList.sol";
-import {Test, console, StdStorage, stdStorage} from "forge-std/Test.sol";
+import {Test, StdStorage, stdStorage} from "forge-std/Test.sol";
 
 contract PtrTest is Test {
     function testCreatePointer(uint64 _seed) public pure {
