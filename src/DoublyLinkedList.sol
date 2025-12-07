@@ -12,11 +12,10 @@ struct Node {
 }
 
 struct DLL {
-    uint64 counter;
+    uint64 version;
     uint64 length;
     ptr head;
     ptr tail;
-    uint64 version;
     mapping(ptr => Node) nodes;
 }
 
@@ -160,9 +159,8 @@ library DoublyLinkedListLib {
         _dll.nodes[_node].set(_value, next, prev, _dll.version);
     }
 
-    function insertBefore(DLL storage _dll, ptr _before, ptr _value) internal {
+    function insertBefore(DLL storage _dll, ptr _before, ptr _value) internal returns (ptr node) {
         validatePointer(_value);
-        ptr node;
         ptr prev;
         if (isValidPointer(_before)) {
             _dll.nodes[_before].validateNode(_dll.version);
@@ -209,8 +207,8 @@ library DoublyLinkedListLib {
         _dll.nodes[_node].clear();
     }
 
-    function push(DLL storage _dll, ptr _value) internal {
-        insertBefore(_dll, NULL_PTR, _value);
+    function push(DLL storage _dll, ptr _value) internal returns (ptr node) {
+        node = insertBefore(_dll, NULL_PTR, _value);
     }
 
     function pop(DLL storage _dll) internal {
@@ -224,7 +222,17 @@ library DoublyLinkedListLib {
     }
 
     function _createNode(DLL storage _dll, ptr _value, ptr _next, ptr _prev) private returns (ptr newNodePtr) {
-        newNodePtr = createPointer(++_dll.counter);
+        newNodePtr = createPointer(
+            uint64(
+                uint256(
+                    keccak256(
+                        abi.encodePacked(
+                            _dll.length, _dll.head, _dll.tail, _dll.version, _value, _next, _prev, block.number
+                        )
+                    )
+                )
+            )
+        );
         _dll.nodes[newNodePtr].set(_value, _next, _prev, _dll.version);
     }
 }

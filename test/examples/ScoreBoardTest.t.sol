@@ -15,8 +15,8 @@ contract ScoreBoardTest is Test {
 
     function testFindLuke() public view {
         (ptr lukePtr,) = scoreBoard.findLuke();
-        (string memory name,,) = scoreBoard.cards(lukePtr);
-        assertEq(name, "Luke");
+        ScoreCard memory card = scoreBoard.valueAtNode(lukePtr);
+        assertEq(card.name, "Luke");
     }
 
     function testFindWinners() public {
@@ -26,10 +26,8 @@ contract ScoreBoardTest is Test {
         assertEq(winnerCard.name, "Jill");
         assertEq(winnerCard.score, 84);
         assertEq(winnerCard.usedBoost, true);
-
         /// Allocate 10 points to each play who didn't boost
         scoreBoard.rewardNonBoosters();
-
         /// Winner after extra points are allocated
         (winnerPtr,) = scoreBoard.findWinner();
         winnerCard = scoreBoard.valueAtNode(winnerPtr);

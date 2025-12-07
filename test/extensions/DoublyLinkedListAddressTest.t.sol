@@ -2,7 +2,6 @@
 /// @author 0xCooki
 pragma solidity ^0.8.8;
 
-import {ptr} from "src/DoublyLinkedList.sol";
 import {DoublyLinkedListAddress} from "src/extensions/DoublyLinkedListAddress.sol";
 import {Test} from "forge-std/Test.sol";
 
@@ -36,13 +35,10 @@ contract DoublyLinkedListAddressTest is Test {
     }
 
     function testInit() public view {
-        (uint64 counter, uint64 length, ptr head, ptr tail, uint64 version) = dllAddress.list();
-        assertEq(counter, 0);
-        assertEq(length, 0);
-        assertEq(ptr.unwrap(head), 0);
-        assertEq(ptr.unwrap(tail), 0);
-        assertEq(dllAddress.length(), 0);
+        (uint64 version, uint64 length,,) = dllAddress.list();
         assertEq(version, 0);
+        assertEq(length, 0);
+        assertEq(dllAddress.length(), 0);
     }
 
     function testAddValueAtPosition(address _value) public {
@@ -52,24 +48,18 @@ contract DoublyLinkedListAddressTest is Test {
         dllAddress.valueAtPosition(0);
         /// Add at position zero
         dllAddress.addValueAtPosition(0, _value);
-        (uint64 counter, uint64 length, ptr head, ptr tail, uint64 version) = dllAddress.list();
-        assertEq(counter, 1);
+        (uint64 version, uint64 length,,) = dllAddress.list();
+        assertEq(version, 0);
         assertEq(length, 1);
-        assertEq(ptr.unwrap(head), 1);
-        assertEq(ptr.unwrap(tail), 1);
         assertEq(dllAddress.length(), 1);
         assertEq(dllAddress.valueAtPosition(0), _value);
-        assertEq(version, 0);
         /// Add at position one
         dllAddress.addValueAtPosition(1, _value);
-        (counter, length, head, tail, version) = dllAddress.list();
-        assertEq(counter, 2);
+        (version, length,,) = dllAddress.list();
+        assertEq(version, 0);
         assertEq(length, 2);
-        assertEq(ptr.unwrap(head), 1);
-        assertEq(ptr.unwrap(tail), 2);
         assertEq(dllAddress.length(), 2);
         assertEq(dllAddress.valueAtPosition(1), _value);
-        assertEq(version, 0);
     }
 
     function testAmendValueAtPosition(address _value0, address _value1) public {
@@ -87,27 +77,21 @@ contract DoublyLinkedListAddressTest is Test {
         dllAddress.push(_value0);
         dllAddress.push(_value0);
         dllAddress.push(_value1);
-        (uint64 counter, uint64 length, ptr head, ptr tail, uint64 version) = dllAddress.list();
-        assertEq(counter, 3);
+        (uint64 version, uint64 length,,) = dllAddress.list();
+        assertEq(version, 0);
         assertEq(length, 3);
-        assertEq(ptr.unwrap(head), 1);
-        assertEq(ptr.unwrap(tail), 3);
         assertEq(dllAddress.length(), 3);
         assertEq(dllAddress.valueAtPosition(0), _value0);
         assertEq(dllAddress.valueAtPosition(1), _value0);
         assertEq(dllAddress.valueAtPosition(2), _value1);
-        assertEq(version, 0);
         /// Remove second value
         dllAddress.removeValueAtPosition(1);
-        (counter, length, head, tail, version) = dllAddress.list();
-        assertEq(counter, 3);
+        (version, length,,) = dllAddress.list();
+        assertEq(version, 0);
         assertEq(length, 2);
-        assertEq(ptr.unwrap(head), 1);
-        assertEq(ptr.unwrap(tail), 3);
         assertEq(dllAddress.length(), 2);
         assertEq(dllAddress.valueAtPosition(0), _value0);
         assertEq(dllAddress.valueAtPosition(1), _value1);
-        assertEq(version, 0);
     }
 
     function testPop(address _value) public {
@@ -115,12 +99,9 @@ contract DoublyLinkedListAddressTest is Test {
         dllAddress.pop();
         dllAddress.push(_value);
         dllAddress.pop();
-        (uint64 counter, uint64 length, ptr head, ptr tail, uint64 version) = dllAddress.list();
-        assertEq(counter, 1);
-        assertEq(length, 0);
-        assertEq(ptr.unwrap(head), 0);
-        assertEq(ptr.unwrap(tail), 0);
-        assertEq(dllAddress.length(), 0);
+        (uint64 version, uint64 length,,) = dllAddress.list();
         assertEq(version, 0);
+        assertEq(length, 0);
+        assertEq(dllAddress.length(), 0);
     }
 }
