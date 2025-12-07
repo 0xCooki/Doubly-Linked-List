@@ -20,12 +20,12 @@ struct DLL {
     mapping(ptr => Node) nodes;
 }
 
-ptr constant NULL_PTR = ptr.wrap(0);
-
 error InvalidPointer();
 error InvalidLength();
 error InvalidNode();
 error ListEmpty();
+
+ptr constant NULL_PTR = ptr.wrap(0);
 
 function createPointer(uint64 _seed) pure returns (ptr) {
     return ptr.wrap(_seed);
@@ -165,6 +165,7 @@ library DoublyLinkedListLib {
         ptr node;
         ptr prev;
         if (isValidPointer(_before)) {
+            _dll.nodes[_before].validateNode(_dll.version);
             ptr beforeValue = _dll.nodes[_before].value;
             ptr beforeNext = _dll.nodes[_before].next;
             prev = _dll.nodes[_before].prev;
@@ -175,6 +176,7 @@ library DoublyLinkedListLib {
             _dll.tail = node = _createNode(_dll, _value, NULL_PTR, prev);
         }
         if (isValidPointer(prev)) {
+            _dll.nodes[prev].validateNode(_dll.version);
             ptr prevValue = _dll.nodes[prev].value;
             ptr prevPrev = _dll.nodes[prev].prev;
             _dll.nodes[prev].set(prevValue, node, prevPrev, _dll.version);
@@ -221,12 +223,8 @@ library DoublyLinkedListLib {
         _dll.version++;
     }
 
-    function _createPointer(DLL storage _dll) private returns (ptr) {
-        return createPointer(++_dll.counter);
-    }
-
     function _createNode(DLL storage _dll, ptr _value, ptr _next, ptr _prev) private returns (ptr newNodePtr) {
-        newNodePtr = _createPointer(_dll);
+        newNodePtr = createPointer(++_dll.counter);
         _dll.nodes[newNodePtr].set(_value, _next, _prev, _dll.version);
     }
 }
