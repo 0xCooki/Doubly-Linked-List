@@ -2,7 +2,7 @@
 /// @author 0xCooki
 pragma solidity ^0.8.8;
 
-import {ptr, createPointer, DLL, NodeLib, Node, DoublyLinkedListLib} from "src/DoublyLinkedList.sol";
+import {ptr, createPointer, DLL, DoublyLinkedListLib} from "src/DoublyLinkedList.sol";
 
 struct ScoreCard {
     string name;
@@ -11,14 +11,13 @@ struct ScoreCard {
 }
 
 contract ScoreBoard {
-    using NodeLib for Node;
     using DoublyLinkedListLib for DLL;
 
-    mapping(ptr => ScoreCard) public cards;
-
-    DLL public board;
+    DLL private board;
 
     uint64 private counter;
+
+    mapping(ptr => ScoreCard) private cards;
 
     constructor() {
         board.push(_createPtrForScoreCard(ScoreCard("Simon", 21, false)));
@@ -56,6 +55,7 @@ contract ScoreBoard {
     /// FIND WINNER ///
 
     ptr private nodeWinner;
+
     uint64 private indexWinner;
 
     function findWinner() external returns (ptr node, uint64 i) {

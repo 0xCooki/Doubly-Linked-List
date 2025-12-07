@@ -218,7 +218,7 @@ library DoublyLinkedListLib {
     function clear(DLL storage _dll) internal {
         _dll.head = _dll.tail = NULL_PTR;
         _dll.length = 0;
-        _dll.version++;
+        ++_dll.version;
     }
 
     function _createNode(DLL storage _dll, ptr _value, ptr _next, ptr _prev) private returns (ptr newNodePtr) {

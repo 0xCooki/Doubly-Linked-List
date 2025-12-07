@@ -16,9 +16,7 @@ contract NameRegistryTest is Test {
 
     function testInit() public view {
         assertEq(nameRegistry.owner(), address(this));
-        (uint64 version, uint64 length,,) = nameRegistry.list();
-        assertEq(version, 0);
-        assertEq(length, 1);
+        assertEq(nameRegistry.length(), 1);
         assertEq(nameRegistry.valueAtPosition(0), "Cooki");
     }
 
@@ -26,33 +24,25 @@ contract NameRegistryTest is Test {
         /// Push two
         nameRegistry.addValueAtPosition(1, "Sarah");
         nameRegistry.addValueAtPosition(1, "Billy");
-        (uint64 version, uint64 length,,) = nameRegistry.list();
-        assertEq(version, 0);
-        assertEq(length, 3);
-        bytes memory returned = nameRegistry.valueAtPosition(2);
-        assertEq(returned, "Sarah");
+        assertEq(nameRegistry.length(), 3);
+        assertEq(nameRegistry.valueAtPosition(2), "Sarah");
         /// Add one to the front
         nameRegistry.addValueAtPosition(0, "Claire");
-        (version, length,,) = nameRegistry.list();
-        assertEq(version, 0);
-        assertEq(length, 4);
+        assertEq(nameRegistry.length(), 4);
         /// Cooki now in second position
-        returned = nameRegistry.valueAtPosition(1);
-        assertEq(returned, "Cooki");
+        assertEq(nameRegistry.valueAtPosition(1), "Cooki");
     }
 
     function testPushTwoAndDeleteSecondNode() public {
         /// Push two to the beginning
         nameRegistry.addValueAtPosition(0, "Sarah");
         nameRegistry.addValueAtPosition(0, "Billy");
-        (uint64 version, uint64 length,,) = nameRegistry.list();
-        assertEq(version, 0);
-        assertEq(length, 3);
+        assertEq(nameRegistry.length(), 3);
         /// Delete sarah
         nameRegistry.removeValueAtPosition(1);
-        (version, length,,) = nameRegistry.list();
-        assertEq(version, 0);
-        assertEq(length, 2);
+        assertEq(nameRegistry.length(), 2);
+        assertEq(nameRegistry.valueAtPosition(0), "Billy");
+        assertEq(nameRegistry.valueAtPosition(1), "Cooki");
     }
 
     function testAccessControl(address _caller) public {

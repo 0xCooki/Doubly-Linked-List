@@ -26,7 +26,7 @@ contract ScoreBoardTest is Test {
         assertEq(winnerCard.name, "Jill");
         assertEq(winnerCard.score, 84);
         assertEq(winnerCard.usedBoost, true);
-        /// Allocate 10 points to each play who didn't boost
+        /// Allocate 10 points to each player who didn't boost
         scoreBoard.rewardNonBoosters();
         /// Winner after extra points are allocated
         (winnerPtr,) = scoreBoard.findWinner();

@@ -35,9 +35,6 @@ contract DoublyLinkedListAddressTest is Test {
     }
 
     function testInit() public view {
-        (uint64 version, uint64 length,,) = dllAddress.list();
-        assertEq(version, 0);
-        assertEq(length, 0);
         assertEq(dllAddress.length(), 0);
     }
 
@@ -48,16 +45,10 @@ contract DoublyLinkedListAddressTest is Test {
         dllAddress.valueAtPosition(0);
         /// Add at position zero
         dllAddress.addValueAtPosition(0, _value);
-        (uint64 version, uint64 length,,) = dllAddress.list();
-        assertEq(version, 0);
-        assertEq(length, 1);
         assertEq(dllAddress.length(), 1);
         assertEq(dllAddress.valueAtPosition(0), _value);
         /// Add at position one
         dllAddress.addValueAtPosition(1, _value);
-        (version, length,,) = dllAddress.list();
-        assertEq(version, 0);
-        assertEq(length, 2);
         assertEq(dllAddress.length(), 2);
         assertEq(dllAddress.valueAtPosition(1), _value);
     }
@@ -77,18 +68,12 @@ contract DoublyLinkedListAddressTest is Test {
         dllAddress.push(_value0);
         dllAddress.push(_value0);
         dllAddress.push(_value1);
-        (uint64 version, uint64 length,,) = dllAddress.list();
-        assertEq(version, 0);
-        assertEq(length, 3);
         assertEq(dllAddress.length(), 3);
         assertEq(dllAddress.valueAtPosition(0), _value0);
         assertEq(dllAddress.valueAtPosition(1), _value0);
         assertEq(dllAddress.valueAtPosition(2), _value1);
         /// Remove second value
         dllAddress.removeValueAtPosition(1);
-        (version, length,,) = dllAddress.list();
-        assertEq(version, 0);
-        assertEq(length, 2);
         assertEq(dllAddress.length(), 2);
         assertEq(dllAddress.valueAtPosition(0), _value0);
         assertEq(dllAddress.valueAtPosition(1), _value1);
@@ -99,9 +84,6 @@ contract DoublyLinkedListAddressTest is Test {
         dllAddress.pop();
         dllAddress.push(_value);
         dllAddress.pop();
-        (uint64 version, uint64 length,,) = dllAddress.list();
-        assertEq(version, 0);
-        assertEq(length, 0);
         assertEq(dllAddress.length(), 0);
     }
 }

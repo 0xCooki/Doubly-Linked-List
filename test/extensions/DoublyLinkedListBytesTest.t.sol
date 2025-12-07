@@ -35,9 +35,6 @@ contract DoublyLinkedListBytesTest is Test {
     }
 
     function testInit() public view {
-        (uint64 version, uint64 length,,) = dllBytes.list();
-        assertEq(version, 0);
-        assertEq(length, 0);
         assertEq(dllBytes.length(), 0);
     }
 
@@ -48,16 +45,10 @@ contract DoublyLinkedListBytesTest is Test {
         dllBytes.valueAtPosition(0);
         /// Add at position zero
         dllBytes.addValueAtPosition(0, _value);
-        (uint64 version, uint64 length,,) = dllBytes.list();
-        assertEq(version, 0);
-        assertEq(length, 1);
         assertEq(dllBytes.length(), 1);
         assertEq(dllBytes.valueAtPosition(0), _value);
         /// Add at position one
         dllBytes.addValueAtPosition(1, _value);
-        (version, length,,) = dllBytes.list();
-        assertEq(version, 0);
-        assertEq(length, 2);
         assertEq(dllBytes.length(), 2);
         assertEq(dllBytes.valueAtPosition(1), _value);
     }
@@ -77,18 +68,12 @@ contract DoublyLinkedListBytesTest is Test {
         dllBytes.push(_value0);
         dllBytes.push(_value0);
         dllBytes.push(_value1);
-        (uint64 version, uint64 length,,) = dllBytes.list();
-        assertEq(version, 0);
-        assertEq(length, 3);
         assertEq(dllBytes.length(), 3);
         assertEq(dllBytes.valueAtPosition(0), _value0);
         assertEq(dllBytes.valueAtPosition(1), _value0);
         assertEq(dllBytes.valueAtPosition(2), _value1);
         /// Remove second value
         dllBytes.removeValueAtPosition(1);
-        (version, length,,) = dllBytes.list();
-        assertEq(version, 0);
-        assertEq(length, 2);
         assertEq(dllBytes.length(), 2);
         assertEq(dllBytes.valueAtPosition(0), _value0);
         assertEq(dllBytes.valueAtPosition(1), _value1);
@@ -99,9 +84,6 @@ contract DoublyLinkedListBytesTest is Test {
         dllBytes.pop();
         dllBytes.push(_value);
         dllBytes.pop();
-        (uint64 version, uint64 length,,) = dllBytes.list();
-        assertEq(version, 0);
-        assertEq(length, 0);
         assertEq(dllBytes.length(), 0);
     }
 }

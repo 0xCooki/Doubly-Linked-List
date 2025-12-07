@@ -35,9 +35,6 @@ contract DoublyLinkedListUint256Test is Test {
     }
 
     function testInit() public view {
-        (uint64 version, uint64 length,,) = dllUint256.list();
-        assertEq(version, 0);
-        assertEq(length, 0);
         assertEq(dllUint256.length(), 0);
     }
 
@@ -48,17 +45,10 @@ contract DoublyLinkedListUint256Test is Test {
         dllUint256.valueAtPosition(0);
         /// Add at position zero
         dllUint256.addValueAtPosition(0, _value);
-        (uint64 version, uint64 length,,) = dllUint256.list();
-        assertEq(version, 0);
-        assertEq(length, 1);
         assertEq(dllUint256.length(), 1);
         assertEq(dllUint256.valueAtPosition(0), _value);
-
         /// Add at position one
         dllUint256.addValueAtPosition(1, _value);
-        (version, length,,) = dllUint256.list();
-        assertEq(version, 0);
-        assertEq(length, 2);
         assertEq(dllUint256.length(), 2);
         assertEq(dllUint256.valueAtPosition(1), _value);
     }
@@ -78,18 +68,12 @@ contract DoublyLinkedListUint256Test is Test {
         dllUint256.push(_value0);
         dllUint256.push(_value0);
         dllUint256.push(_value1);
-        (uint64 version, uint64 length,,) = dllUint256.list();
-        assertEq(version, 0);
-        assertEq(length, 3);
         assertEq(dllUint256.length(), 3);
         assertEq(dllUint256.valueAtPosition(0), _value0);
         assertEq(dllUint256.valueAtPosition(1), _value0);
         assertEq(dllUint256.valueAtPosition(2), _value1);
         /// Remove second value
         dllUint256.removeValueAtPosition(1);
-        (version, length,,) = dllUint256.list();
-        assertEq(version, 0);
-        assertEq(length, 2);
         assertEq(dllUint256.length(), 2);
         assertEq(dllUint256.valueAtPosition(0), _value0);
         assertEq(dllUint256.valueAtPosition(1), _value1);
@@ -100,9 +84,6 @@ contract DoublyLinkedListUint256Test is Test {
         dllUint256.pop();
         dllUint256.push(_value);
         dllUint256.pop();
-        (uint64 version, uint64 length,,) = dllUint256.list();
-        assertEq(version, 0);
-        assertEq(length, 0);
         assertEq(dllUint256.length(), 0);
     }
 }
